@@ -1,0 +1,130 @@
+<mvc:View
+  controllerName="ntt.bookshop.custombookshop.controller.ListAll"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+  xmlns:ndc="sap.ndc"
+  xmlns:form="sap.ui.layout.form"
+  xmlns:core="sap.ui.core"
+  xmlns:smartTable="sap.ui.comp.smarttable"
+  xmlns="sap.m"
+  displayBlock="true"
+  height="100%"
+  busyIndicatorDelay="0"
+>
+  <Panel
+    headerText="Book List"
+    expandable="true"
+    expanded="true"
+  >
+    <VBox id="idVboxMain">
+      <smartFilterBar:SmartFilterBar
+        id="smartFilterBar"
+        entitySet="Books"
+        persistencyKey="SmartFilter_Explored"
+        enableBasicSearch="false"
+        showClearOnFB="true"
+      >
+        <!-- layout data used to make the table growing but the filter bar fixed -->
+        <smartFilterBar:layoutData>
+          <FlexItemData shrinkFactor="0" />
+        </smartFilterBar:layoutData>
+      </smartFilterBar:SmartFilterBar>
+      <smartTable:SmartTable
+        id="idTblBookData"
+        entitySet="Books"
+        tableType="ResponsiveTable"
+        header="Books"
+        smartFilterId="smartFilterBar"
+        persistencyKey="SmartTableAnalytical_Explored"
+        enableAutoBinding="true"
+        beforeRebindTable="onBeforeRebindBooksTable"
+        class="sapUiResponsiveContentPadding"
+        enableAutoColumnWidth="true"
+      >
+        <smartTable:customToolbar>
+          <OverflowToolbar design="Transparent">
+            <ToolbarSpacer />
+            <ndc:BarcodeScannerButton
+              id="bookBarcodeScannerButton"
+              scanSuccess="onScanSuccess"
+              scanFail="onScanError"
+              dialogTitle="Find Book From Barcode"
+            />
+            <Button
+              type="Success"
+              id="btnCreateBook"
+              text="Create Book"
+              enabled="true"
+              press="onPressCreateBook"
+            />
+            <Button
+              type="Attention"
+              id="btnLendBook"
+              text="Lend Book"
+              enabled="true"
+              press="onPressLendBook"
+            />
+            <Button
+              type="Negative"
+              id="btnDeleteBook"
+              text="Delete"
+              enabled="false"
+              press="onDeleteBook"
+            />
+            <Button
+              type="Transparent"
+              id="btnMultiEditBook"
+              text="Edit Books"
+              enabled="false"
+              press="onOpenMultiEdit"
+            />
+          </OverflowToolbar>
+        </smartTable:customToolbar>
+      </smartTable:SmartTable>
+    </VBox>
+  </Panel>
+  <Panel
+    headerText="Author List"
+    expandable="true"
+    class="sapUiTinyMarginTop"
+  >
+    <smartTable:SmartTable
+      id="idTblAuthorData"
+      entitySet="Authors"
+      tableType="ResponsiveTable"
+      header="Authors"
+      persistencyKey="SmartTableAnalytical_Explored"
+      enableAutoBinding="true"
+      class="sapUiResponsiveContentPadding"
+      enableAutoColumnWidth="true"
+    />
+  </Panel>
+  <Panel
+    headerText="Category List"
+    expandable="true"
+    class="sapUiTinyMarginTop"
+  >
+    <HBox>
+      <smartTable:SmartTable
+        id="idTblCategoryData"
+        entitySet="Category"
+        tableType="ResponsiveTable"
+        header="Categories"
+        persistencyKey="SmartTableAnalytical_Explored"
+        enableAutoBinding="true"
+        class="sapUiResponsiveContentPadding sapUiTinyMarginEnd"
+        enableAutoColumnWidth="true"
+      />
+      <smartTable:SmartTable
+        id="idTblSubCategoryData"
+        entitySet="SubCategory"
+        tableType="ResponsiveTable"
+        header="Sub Categories"
+        persistencyKey="SmartTableAnalytical_Explored"
+        enableAutoBinding="true"
+        class="sapUiResponsiveContentPadding "
+        enableAutoColumnWidth="true"
+      />
+    </HBox>
+  </Panel>
+</mvc:View>

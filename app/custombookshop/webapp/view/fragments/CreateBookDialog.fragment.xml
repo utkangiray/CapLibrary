@@ -1,0 +1,87 @@
+<c:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:c="sap.ui.core"
+  xmlns:l="sap.ui.layout"
+  xmlns:f="sap.ui.layout.form"
+  xmlns:core="sap.ui.core"
+  xmlns:ndc="sap.ndc"
+>
+  <Dialog title="Create A New Book">
+    <content>
+      <VBox class="sapUiSmallMargin">
+        <f:SimpleForm
+          editable="true"
+          layout="ResponsiveGridLayout"
+          labelSpanXL="3"
+          labelSpanL="3"
+          labelSpanM="3"
+          labelSpanS="12"
+          adjustLabelSpan="false"
+          emptySpanXL="4"
+          emptySpanL="4"
+          emptySpanM="4"
+          emptySpanS="0"
+          columnsXL="1"
+          columnsL="1"
+          columnsM="1"
+          singleContainerFullSize="false"
+        >
+          <f:content>
+            <Label text="ID" />
+            <Input
+              value="{mainModel>/createBookData/ID}"
+              enabled="false"
+            />
+            <ndc:BarcodeScannerButton
+              scanSuccess="onScanSuccessCreate"
+              scanFail="onScanError"
+              dialogTitle="Scan Barcode"
+            />
+            <Label text="Book Title." />
+            <Input value="{mainModel>/createBookData/title}" />
+            <Label text="Description" />
+            <TextArea
+              value="{mainModel>/createBookData/descr}"
+              showExceededText="true"
+              maxLength="1111"
+              valueState="{= ${/value}.length > 1111 ? 'Warning' : 'None' }"
+            />
+            <Label text="Author ID" />
+            <Input
+              value="{mainModel>/createBookData/author_ID}"
+              liveChange="onAuthorIdInputLiveChange"
+              type="Number"
+            />
+            <Label text="Author Name" />
+            <Input
+              value="{mainModel>/createBookData/author/name}"
+              editable="{= ${mainModel>/booleanControl/authorName}}"
+            />
+            <Label text="Category" />
+            <Input
+              value="{mainModel>/createBookData/category_ID}"
+              type="Number"
+            />
+          </f:content>
+        </f:SimpleForm>
+      </VBox>
+    </content>
+    <footer>
+      <Toolbar>
+        <content>
+          <ToolbarSpacer />
+          <Button
+            type="Accept"
+            text="Create"
+            press="._onCreateBook"
+          />
+          <Button
+            text="Close"
+            type="Reject"
+            press="._onCloseBookDialog"
+          />
+        </content>
+      </Toolbar>
+    </footer>
+  </Dialog>
+</c:FragmentDefinition>

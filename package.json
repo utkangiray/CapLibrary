@@ -1,0 +1,25 @@
+{
+  "name": "bookshop-task",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap/cds": "^7",
+    "express": "^4"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^1",
+    "@sap/cds-odata-v2-adapter-proxy": "^1.9.21",
+    "@sap/ux-specification": "^1.120.4"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch-bookshop": "cds watch --open bookshop/webapp/index.html?sap-ui-xx-viewCache=false",
+    "watch-custombookshop": "cds watch --open custombookshop/webapp/index.html?sap-ui-xx-viewCache=false"
+  },
+  "sapux": [
+    "app/bookshop"
+  ]
+}
