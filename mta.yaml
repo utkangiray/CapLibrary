@@ -1,0 +1,139 @@
+_schema-version: "3.1"
+ID: bookshop-task
+description: A simple CAP project.
+version: 1.0.0
+modules:
+- name: bookshop-task-srv
+  type: nodejs
+  path: gen/srv
+  requires:
+  - name: bookshop-task-db
+  - name: bookshop-task-auth
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    buildpack: nodejs_buildpack
+    memory: 512M
+    disk-quota: 1024M
+  build-parameters:
+    builder: npm
+    ignore: ['package-lock.json', 'node_modules/']
+- name: bookshop-task-db-deployer
+  type: hdb
+  path: gen/db
+  requires:
+  - name: bookshop-task-db
+  parameters:
+    buildpack: nodejs_buildpack
+- name: bookshop-task-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: bookshop-task-destination-service
+    parameters:
+      content-target: true
+  - name: bookshop-task_html_repo_host
+    parameters:
+      service-key:
+        name: bookshop-task_html_repo_host-key
+  - name: bookshop-task-auth
+    parameters:
+      service-key:
+        name: bookshop-task-auth-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: library_bookshop_task_html_repo_host
+          ServiceInstanceName: bookshop-task-html5-app-host-service
+          ServiceKeyName: bookshop-task_html_repo_host-key
+          sap.cloud.service: library
+        - Authentication: OAuth2UserTokenExchange
+          Name: library_bookshop_task_auth
+          ServiceInstanceName: bookshop-task-auth
+          ServiceKeyName: bookshop-task-auth-key
+          sap.cloud.service: library
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+- name: bookshop-task-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: bookshop-task_html_repo_host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - nttbookshopcustombookshop.zip
+      name: nttbookshopcustombookshop
+      target-path: resources/
+- name: nttbookshopcustombookshop
+  type: html5
+  path: app/custombookshop
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: bookshop-task-db
+  type: com.sap.xs.hdi-container
+  parameters:
+    service: hana
+    service-plan: hdi-shared
+- name: bookshop-task-auth
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      tenant-mode: dedicated
+      xsappname: bookshop-task-${org}-${space}
+    path: ./xs-security.json
+    service: xsuaa
+    service-plan: application
+- name: bookshop-task-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          - Authentication: NoAuthentication
+            HTML5.DynamicDestination: true
+            HTML5.ForwardAuthToken: true
+            Name: bookshop-task-srv-api
+            ProxyType: Internet
+            Type: HTTP
+            URL: ~{srv-api/srv-url}
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: bookshop-task-destination-service
+    service-plan: lite
+  requires:
+  - name: srv-api
+- name: bookshop-task_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: bookshop-task-html5-app-host-service
+    service-plan: app-host
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npx cds build --production

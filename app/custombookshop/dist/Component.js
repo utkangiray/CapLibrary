@@ -1,0 +1,1 @@
+sap.ui.define(["sap/ui/core/UIComponent","sap/ui/Device","ntt/bookshop/custombookshop/model/models"],function(o,t,e){"use strict";return o.extend("ntt.bookshop.custombookshop.Component",{metadata:{manifest:"json"},init:function(){o.prototype.init.apply(this,arguments);this.getRouter().initialize();this.setModel(e.createDeviceModel(),"device")}})});

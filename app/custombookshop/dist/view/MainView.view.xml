@@ -1,0 +1,68 @@
+<mvc:View
+  controllerName="ntt.bookshop.custombookshop.controller.MainView"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+  xmlns:form="sap.ui.layout.form"
+  xmlns:core="sap.ui.core"
+  xmlns:smartTable="sap.ui.comp.smarttable"
+  xmlns="sap.m"
+  xmlns:u="sap.ui.unified"
+  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+  xmlns:sl="sap.ui.comp.navpopover"
+  xmlns:smartchart="sap.ui.comp.smartchart"
+  displayBlock="true"
+>
+  <Page
+    id="page"
+    title="{i18n>title}"
+  >
+    <content>
+      <IconTabBar
+        id="idIconTabBar"
+        class="sapUiResponsiveContentPadding"
+      >
+        <items>
+          <IconTabFilter
+            text="List"
+            key="list"
+          >
+            <mvc:XMLView viewName="ntt.bookshop.custombookshop.view.ListAll" />
+          </IconTabFilter>
+          <IconTabFilter
+            text="Recording"
+            key="recording"
+          >
+            <items>
+              <IconTabFilter text="Book Chart Report">
+                <smartchart:SmartChart
+                  id="smartChartBooks"
+                  enableAutoBinding="true"
+                  entitySet="BooksAnalytics"
+                  header="Books"
+                />
+              </IconTabFilter>
+              <IconTabFilter text="Author Chart Report">
+                <smartchart:SmartChart
+                  id="smartChartAuthor"
+                  enableAutoBinding="true"
+                  entitySet="AuthorAnalytics"
+                  header="Authors"
+                />
+              </IconTabFilter>
+            </items>
+            <smartTable:SmartTable
+              id="idTblReportingData"
+              entitySet="Reporting"
+              tableType="ResponsiveTable"
+              header="Recording Report"
+              persistencyKey="SmartTableAnalytical_Explored"
+              enableAutoBinding="true"
+              class="sapUiResponsiveContentPadding sapUiTinyMarginEnd"
+              enableAutoColumnWidth="true"
+            />
+          </IconTabFilter>
+        </items>
+      </IconTabBar>
+    </content>
+  </Page>
+</mvc:View>

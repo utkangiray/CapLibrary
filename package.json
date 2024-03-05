@@ -1,25 +1,54 @@
 {
-  "name": "bookshop-task",
-  "version": "1.0.0",
-  "description": "A simple CAP project.",
-  "repository": "<Add your repository here>",
-  "license": "UNLICENSED",
-  "private": true,
-  "dependencies": {
-    "@sap/cds": "^7",
-    "express": "^4"
-  },
-  "devDependencies": {
-    "@cap-js/sqlite": "^1",
-    "@sap/cds-odata-v2-adapter-proxy": "^1.9.21",
-    "@sap/ux-specification": "^1.120.4"
-  },
-  "scripts": {
-    "start": "cds-serve",
-    "watch-bookshop": "cds watch --open bookshop/webapp/index.html?sap-ui-xx-viewCache=false",
-    "watch-custombookshop": "cds watch --open custombookshop/webapp/index.html?sap-ui-xx-viewCache=false"
-  },
-  "sapux": [
-    "app/bookshop"
-  ]
+    "name": "bookshop-task",
+    "version": "1.0.0",
+    "description": "A simple CAP project.",
+    "repository": "<Add your repository here>",
+    "license": "UNLICENSED",
+    "engines": {
+        "node": "^20"
+    },
+    "private": true,
+    "dependencies": {
+        "@sap/cds": "^7",
+        "@sap/cds-hana": "^2",
+        "@sap/cds-odata-v2-adapter-proxy": "^1.9.21",
+        "@sap/xssec": "^3",
+        "express": "^4",
+        "passport": "^0.7.0"
+    },
+    "devDependencies": {
+        "@cap-js/sqlite": "^1",
+        "@sap/cds-dk": "^7",
+        "@sap/hdi-deploy": "^5.0.1",
+        "@sap/ux-specification": "^1.120.4",
+        "rimraf": "^3.0.2"
+    },
+    "scripts": {
+        "start": "cds-serve",
+        "watch-bookshop": "cds watch --open bookshop/webapp/index.html?sap-ui-xx-viewCache=false",
+        "watch-custombookshop": "cds watch --open custombookshop/webapp/index.html?sap-ui-xx-viewCache=false",
+        "undeploy": "cf undeploy bookshop-task --delete-services --delete-service-keys --delete-service-brokers",
+        "build": "rimraf resources mta_archives && mbt build --mtar archive",
+        "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
+    },
+    "sapux": [
+        "app/bookshop"
+    ],
+    "cds": {
+        "requires": {
+            "[production]": {
+                "db": "hana",
+                "auth": "xsuaa"
+            },
+            "[development]": {
+                "auth": {
+                  "kind": "mocked",
+                  "users": { "utkan": {
+                    "password": "123456",
+                    "roles": ["admin"]
+                  }
+                }}
+                }
+        }
+    }
 }

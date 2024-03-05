@@ -1,0 +1,73 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:sf="sap.ui.comp.smartform"
+    xmlns:core="sap.ui.core"
+    xmlns:smartmultiedit="sap.ui.comp.smartmultiedit"
+>
+    <Dialog
+        title="Edit Books"
+        class="sapUiContentPadding"
+        id="multipleEditingDialog"
+        contentWidth="30rem"
+        horizontalScrolling="false"
+    >
+        <content>
+            <smartmultiedit:Container
+                entitySet="Books"
+                id="multiEditContainer"
+            >
+                <smartmultiedit:layout>
+                    <sf:SmartForm editable="true">
+                        <sf:layout>
+                            <sf:Layout
+                                labelSpanM="12"
+                                labelSpanL="12"
+                                labelSpanXL="12"
+                            />
+                        </sf:layout>
+                        <sf:groups>
+                            <sf:Group>
+                                <sf:GroupElement>
+                                    <sf:elements>
+                                        <smartmultiedit:Field propertyName="title" />
+                                    </sf:elements>
+                                </sf:GroupElement>
+                                <sf:GroupElement>
+                                    <sf:elements>
+                                        <smartmultiedit:Field propertyName="descr" />
+                                    </sf:elements>
+                                </sf:GroupElement>
+                                <sf:GroupElement>
+                                    <sf:elements>
+                                        <smartmultiedit:Field propertyName="author_ID" />
+                                    </sf:elements>
+                                </sf:GroupElement>
+                                <sf:GroupElement>
+                                    <sf:elements>
+                                        <smartmultiedit:Field propertyName="category_ID" />
+                                    </sf:elements>
+                                </sf:GroupElement>
+                                <sf:GroupElement>
+                                    <sf:elements>
+                                        <smartmultiedit:Field propertyName="avaliable" />
+                                    </sf:elements>
+                                </sf:GroupElement>
+                            </sf:Group>
+                        </sf:groups>
+                    </sf:SmartForm>
+                </smartmultiedit:layout>
+            </smartmultiedit:Container>
+        </content>
+        <buttons>
+            <Button
+                text="Save"
+                press="onBookDialogSaveButton"
+                type="Emphasized"
+            />
+            <Button
+                text="Cancel"
+                press="onBookCloseDialog"
+            />
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>

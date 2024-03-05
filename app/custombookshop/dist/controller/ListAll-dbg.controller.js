@@ -76,9 +76,6 @@ sap.ui.define(
 
       _fetchData: function () {
         var oView = this.getView();
-        oView.byId("idTblBookData").rebindTable();
-        oView.byId("idTblAuthorData").rebindTable();
-        var oView = this.getView();
 
         this.oDataModel.read("/Authors", {
           success: (oData, oResponse) => {
@@ -203,11 +200,12 @@ sap.ui.define(
           }
         };
 
-        MessageToast.show("Saving..");
+        MessageToast.show("Save action started");
         oMultiEditContainer.getAllUpdatedContexts(true).then(
           function (result) {
             MessageToast.show("Updated contexts available", {
               onClose: function () {
+           
                 aUpdatedContexts = result;
                 for (var i = 0; i < aUpdatedContexts.length; i++) {
                   oContext = aUpdatedContexts[i].context;
@@ -225,7 +223,7 @@ sap.ui.define(
                     .getModel()
                     .update(oContext.getPath(), oUpdatedDataCopy);
                 }
-                MessageToast.show("Books was updated");
+                MessageToast.show("Model was updated");
 
                 that.onBookCloseDialog();
               }.bind(this),
@@ -266,19 +264,10 @@ sap.ui.define(
           this.oDataModel.remove(sPath, {
             groupId: "group1",
             success: function (oData, oResponse) {
-              MessageToast.show("Books was deleted");
+     
             },
             error: function (oError) {
-              try {
-                var errMessage = JSON.parse(oError.responseText);
-                errMessage = errMessage.error.message.value;
-              } catch (e) {
-                errMessage = oError.message;
-              }
-              sap.m.MessageBox.alert(errMessage, {
-                icon: sap.m.MessageBox.Icon.ERROR,
-                title: "Error!",
-              });
+              //TODO
             },
           });
         }
@@ -318,7 +307,7 @@ sap.ui.define(
           .getModel("mainModel")
           .getProperty("/booleanControl/authorName");
 
-        //if author exist no need to create, delete author deep entity
+        //if author exist delete author deep entity
         if (!checkAuthorNotExist) {
           delete oCreateBookEntry.author;
         }
@@ -326,7 +315,6 @@ sap.ui.define(
         this.oDataModel.create("/Books", oCreateBookEntry, {
           success: (oData, oResponse) => {
             sap.ui.core.BusyIndicator.hide(0);
-            MessageToast.show("Book Created");
             //set initial data
             that._initialModel();
             //fetch jsonmodel data
@@ -397,7 +385,7 @@ sap.ui.define(
         var that = this;
         var oLenBookModel = this.getView().getModel("mainModel");
         var oLenBookEntry = oLenBookModel.getProperty("/LendBookData");
-
+    
         sap.ui.core.BusyIndicator.show(0);
         this.oDataModel.create("/Reporting", oLenBookEntry, {
           success: (oData, oResponse) => {

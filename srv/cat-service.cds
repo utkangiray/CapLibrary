@@ -54,3 +54,5 @@ service CatalogService {
             count
         }
 }
+
+annotate CatalogService with @(requires: 'admin');
