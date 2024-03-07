@@ -57,6 +57,9 @@
               value="{mainModel>/createBookData/author/name}"
               editable="{= ${mainModel>/booleanControl/authorName}}"
             />
+            <Label text="Place Of Birth"></Label>
+            <Input value="{mainModel>/createBookData/author/placeOfBirth}"
+            visible="{= ${mainModel>/booleanControl/authorName}}"></Input>
             <Label text="Category" />
             <Input
               value="{mainModel>/createBookData/category_ID}"

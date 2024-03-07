@@ -34,7 +34,6 @@ sap.ui.define(
         this._fetchData();
         this._initialModel();
       },
-
       _initialModel: function () {
         var oView = this.getView();
         var oCreateTableModel = {
@@ -76,6 +75,8 @@ sap.ui.define(
 
       _fetchData: function () {
         var oView = this.getView();
+        oView.byId("idTblBookData").rebindTable();
+        oView.byId("idTblAuthorData").rebindTable();
 
         this.oDataModel.read("/Authors", {
           success: (oData, oResponse) => {
@@ -200,12 +201,11 @@ sap.ui.define(
           }
         };
 
-        MessageToast.show("Save action started");
+        MessageToast.show("Saving..");
         oMultiEditContainer.getAllUpdatedContexts(true).then(
           function (result) {
             MessageToast.show("Updated contexts available", {
               onClose: function () {
-           
                 aUpdatedContexts = result;
                 for (var i = 0; i < aUpdatedContexts.length; i++) {
                   oContext = aUpdatedContexts[i].context;
@@ -223,7 +223,7 @@ sap.ui.define(
                     .getModel()
                     .update(oContext.getPath(), oUpdatedDataCopy);
                 }
-                MessageToast.show("Model was updated");
+                MessageToast.show("Books was updated");
 
                 that.onBookCloseDialog();
               }.bind(this),
@@ -247,7 +247,7 @@ sap.ui.define(
         this.getView().byId("idTblBookData").rebindTable();
       },
 
-      onBeforeRebindBooksTable: function (oSource) {},
+      onBeforeRebindBooksTable: function (oSource) { },
 
       onScanError: function (oEvent) {
         MessageToast.show("Scan failed: " + oEvent, { duration: 1000 });
@@ -264,10 +264,19 @@ sap.ui.define(
           this.oDataModel.remove(sPath, {
             groupId: "group1",
             success: function (oData, oResponse) {
-     
+              MessageToast.show("Books was deleted");
             },
             error: function (oError) {
-              //TODO
+              try {
+                var errMessage = JSON.parse(oError.responseText);
+                errMessage = errMessage.error.message.value;
+              } catch (e) {
+                errMessage = oError.message;
+              }
+              sap.m.MessageBox.alert(errMessage, {
+                icon: sap.m.MessageBox.Icon.ERROR,
+                title: "Error!",
+              });
             },
           });
         }
@@ -307,7 +316,7 @@ sap.ui.define(
           .getModel("mainModel")
           .getProperty("/booleanControl/authorName");
 
-        //if author exist delete author deep entity
+        //if author exist no need to create, delete author deep entity
         if (!checkAuthorNotExist) {
           delete oCreateBookEntry.author;
         }
@@ -315,6 +324,7 @@ sap.ui.define(
         this.oDataModel.create("/Books", oCreateBookEntry, {
           success: (oData, oResponse) => {
             sap.ui.core.BusyIndicator.hide(0);
+            MessageToast.show("Book Created");
             //set initial data
             that._initialModel();
             //fetch jsonmodel data
@@ -349,7 +359,7 @@ sap.ui.define(
           return obj.ID === authorID;
         });
 
-        //if author exist set values
+        //if author exist set  authour values
         if (checkAuthor.length > 0) {
           delete checkAuthor[0].__metadata;
           this.getView()
@@ -357,7 +367,7 @@ sap.ui.define(
             .setProperty("/createBookData/author", checkAuthor[0]);
           this.getView()
             .getModel("mainModel")
-            .setProperty("/booleanControl/authorName", false);
+            .setProperty("/boolanControl/authorName", false);
           this.getView().getModel("mainModel").refresh();
         } else {
           this.getView()
@@ -385,16 +395,47 @@ sap.ui.define(
         var that = this;
         var oLenBookModel = this.getView().getModel("mainModel");
         var oLenBookEntry = oLenBookModel.getProperty("/LendBookData");
-    
+        var oBook = this.oDataModel.getContext("/Books(" + oLenBookEntry.book_ID + ")").getObject()
+        //check if book is avaliable
+        if (oBook === undefined || oBook.avaliable === 'N') {
+          MessageToast.show('Book is not available on system')
+          return;
+        }
+
+        var sAutorPath = "/" + oBook.author.__ref
+        var oAuthor = this.oDataModel.getContext(sAutorPath).getObject();
+        let today = new Date();
+        let sFullYear = today.getFullYear().toString();
+        let sMonth =
+          (today.getMonth() + 1).toString().length > 1
+            ? (today.getMonth() + 1).toString()
+            : "0" + (today.getMonth() + 1).toString()
+
+        //Calculate Week Number 
+        let yearStart = +new Date(today.getFullYear(), 0, 1);
+        let todayy = +new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        let dayOfYear = (todayy - yearStart + 1) / 86400000;
+        let sWeek = Math.ceil(dayOfYear / 7);
+
+        //Fill Lended Book Values
+        oLenBookEntry.author = oAuthor.name
+        oLenBookEntry.bookName = oBook.title
+        oLenBookEntry.takeDate = today;
+
+        //Fill Values For Analytical Report
+        oLenBookEntry.week = sFullYear + "/" + sWeek
+        oLenBookEntry.year = sFullYear
+        oLenBookEntry.month = sFullYear + "/" + sMonth
         sap.ui.core.BusyIndicator.show(0);
         this.oDataModel.create("/Reporting", oLenBookEntry, {
           success: (oData, oResponse) => {
+            that.LendDialog.close();
             sap.ui.core.BusyIndicator.hide(0);
             //set Initial data
             that._initialModel();
             //rebind Table Book Data
             that.getView().byId("idTblBookData").rebindTable();
-            that.LendDialog.close();
+            
           },
           error: (oError) => {
             that.LendDialog.close();

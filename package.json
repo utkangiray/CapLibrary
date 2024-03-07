@@ -14,7 +14,8 @@
         "@sap/cds-odata-v2-adapter-proxy": "^1.9.21",
         "@sap/xssec": "^3",
         "express": "^4",
-        "passport": "^0.7.0"
+        "passport": "^0.7.0",
+        "sqlite3": "^5.1.7"
     },
     "devDependencies": {
         "@cap-js/sqlite": "^1",
@@ -42,13 +43,17 @@
             },
             "[development]": {
                 "auth": {
-                  "kind": "mocked",
-                  "users": { "utkan": {
-                    "password": "123456",
-                    "roles": ["admin"]
-                  }
-                }}
+                    "kind": "mocked",
+                    "users": {
+                        "utkan": {
+                            "password": "123456",
+                            "roles": [
+                                "admin"
+                            ]
+                        }
+                    }
                 }
+            }
         }
     }
 }

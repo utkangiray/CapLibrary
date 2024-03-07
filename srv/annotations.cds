@@ -129,11 +129,11 @@ annotate CatalogService.SubCategory with @(
         LineItem       : [
             {
                 Value: ID,
-                Label: 'Category ID'
+                Label: 'Sub Category ID'
             },
             {
                 Value: name,
-                Label: 'SubCategory Name'
+                Label: 'Sub Category Name'
             },
             {
                 Value: category.name,
