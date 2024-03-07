@@ -78,6 +78,7 @@ sap.ui.define(
         oView.byId("idTblBookData").rebindTable();
         oView.byId("idTblAuthorData").rebindTable();
 
+
         this.oDataModel.read("/Authors", {
           success: (oData, oResponse) => {
             var data = oData.results;
@@ -435,7 +436,10 @@ sap.ui.define(
             that._initialModel();
             //rebind Table Book Data
             that.getView().byId("idTblBookData").rebindTable();
-            
+            //rebind Charts
+            sap.ui.getCore().getEventBus().publish("ListAll", "bindCharts");
+         
+
           },
           error: (oError) => {
             that.LendDialog.close();

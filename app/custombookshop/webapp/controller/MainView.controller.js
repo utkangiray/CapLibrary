@@ -17,8 +17,17 @@ sap.ui.define(
         onInit: function () {
           var oDataModel, oView;
           this.oDataModel = this.getOwnerComponent().getModel();
-      //  this.oMainModel = this.getOwnerComponent().getModel("mainModel");
+          //  this.oMainModel = this.getOwnerComponent().getModel("mainModel");
           this.getView().setModel(this.oDataModel);
+
+          var oEventBus = sap.ui.getCore().getEventBus();
+       oEventBus.subscribe("LisAll", "rebindCharts", this.rebindCharts, this)
+     
+        },
+
+        rebindCharts : function () {
+          this.getView().byId("smartChartBooks").rebindChart();
+          this.getView().byId("smartChartAuthor").rebindChart();
         }
       }
     );
